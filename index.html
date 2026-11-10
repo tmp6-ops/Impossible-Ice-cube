@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impossible Ice Cube Challenge 🧊</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="snow-canvas-container" id="snowContainer"></div>
+
+    <!-- Main Game Frame -->
+    <main class="game-container">
+        <!-- Top Status Bar -->
+        <header class="game-header">
+            <div class="level-badge">
+                <span class="badge-label">CHALLENGE</span>
+                <span class="badge-number" id="levelIndicator">1 / 10</span>
+            </div>
+
+            <h1 class="main-title">
+                <span class="title-ice">IMPOSSIBLE</span>
+                <span class="title-sub">ICE CUBE CHALLENGE</span>
+            </h1>
+
+            <div class="stats-pills">
+                <div class="pill timer-pill" id="timerBox">
+                    <span class="pill-icon">⏱️</span>
+                    <span class="pill-val" id="timerDisplay">30s</span>
+                </div>
+                <div class="pill score-pill">
+                    <span class="pill-icon">⭐</span>
+                    <span class="pill-val" id="scoreDisplay">0 pts</span>
+                </div>
+                <button class="sound-toggle-btn" id="soundToggleBtn" aria-label="Toggle Sound" title="Toggle Sound">
+                    🔊
+                </button>
+            </div>
+        </header>
+
+        <!-- Progress Tracker Bar -->
+        <div class="progress-track" aria-label="10 Level Progress Track">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+            <div class="level-nodes" id="levelNodes">
+                <!-- Injected via JS 1 to 10 nodes -->
+            </div>
+        </div>
+
+        <!-- Center Stage: The Ice Cube & Ambient Platform -->
+        <section class="cube-stage">
+            <div class="floating-ring"></div>
+            <div class="frost-particles" id="frostParticles"></div>
+
+            <!-- The Interactive Ice Cube -->
+            <div class="ice-cube-wrapper" id="cubeWrapper" title="Click or poke the ice cube!">
+                <div class="ice-cube" id="iceCube">
+                    <!-- 3D Glacial Faces -->
+                    <div class="cube-facet facet-front">
+                        <div class="specular-glare"></div>
+                        <div class="frost-cracks" id="cubeCracks"></div>
+                        <div class="cube-face">
+                            <div class="eyes-container">
+                                <div class="eye left-eye">
+                                    <div class="pupil"></div>
+                                    <div class="eyebrow" id="leftEyebrow"></div>
+                                </div>
+                                <div class="eye right-eye">
+                                    <div class="pupil"></div>
+                                    <div class="eyebrow" id="rightEyebrow"></div>
+                                </div>
+                            </div>
+                            <div class="blush-cheeks">
+                                <span class="blush blush-left"></span>
+                                <span class="blush blush-right"></span>
+                            </div>
+                            <div class="mouth" id="cubeMouth"></div>
+                            <div class="sweat-drop" id="sweatDrop">💧</div>
+                            <div class="freeze-shiver" id="freezeFrost">❄️</div>
+                        </div>
+                    </div>
+                    <div class="cube-facet facet-top"></div>
+                    <div class="cube-facet facet-right"></div>
+                    <div class="cube-facet facet-left"></div>
+                    <div class="cube-facet facet-bottom"></div>
+                </div>
+
+                <!-- Cube Shadow & Melt Droplets -->
+                <div class="cube-shadow" id="cubeShadow"></div>
+                <div class="melting-drips" id="dripsContainer"></div>
+            </div>
+
+            <!-- Cube Name & Mood Tag -->
+            <div class="cube-status-tag" id="cubeStatusTag">
+                <span class="mood-emoji" id="moodEmoji">🧊</span>
+                <span class="mood-text" id="moodText">Pip is chill and ready!</span>
+            </div>
+        </section>
+
+        <!-- Challenge & Interaction Card -->
+        <section class="challenge-card" id="challengeCard">
+            <!-- Question Header -->
+            <div class="challenge-meta">
+                <span class="difficulty-tag" id="difficultyTag">Easy Peasy</span>
+                <span class="timer-warning hidden" id="hurryWarning">⚠️ Melting Fast!</span>
+            </div>
+
+            <h2 class="challenge-title" id="challengePrompt">
+                Loading challenge...
+            </h2>
+            <p class="challenge-hint" id="challengeHint">
+                Read carefully! Think outside the icebox.
+            </p>
+
+            <!-- Interactive Riddle/Task Area -->
+            <div class="challenge-interact-zone" id="interactZone">
+                <!-- Form Inputs -->
+                <form id="answerForm" class="answer-form" autocomplete="off" onsubmit="return false;">
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="answerInput" 
+                            class="answer-input" 
+                            placeholder="Type your clever answer here..." 
+                            maxlength="100"
+                            autocomplete="off"
+                            spellcheck="false"
+                        />
+                        <button type="button" class="clear-input-btn" id="clearInputBtn" title="Clear text">✕</button>
+                    </div>
+
+                    <!-- Extra Interactive Elements (Clickable ice buttons, slider, or taps when level requires) -->
+                    <div class="extra-actions-container hidden" id="extraActions"></div>
+
+                    <div class="buttons-row">
+                        <button type="button" class="btn-secondary" id="hintBtn" title="Get a clever hint">
+                            💡 Hint (<span id="hintCount">3</span>)
+                        </button>
+                        <button type="submit" class="btn-primary" id="submitBtn">
+                            <span class="btn-text">Submit Answer</span>
+                            <span class="btn-icon">⚡</span>
+                        </button>
+                        <button type="button" class="btn-next hidden" id="nextBtn">
+                            <span class="btn-text">Next Level</span>
+                            <span class="btn-icon">➔</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Verdict & Feedback Banner -->
+            <div class="verdict-banner hidden" id="verdictBanner">
+                <div class="verdict-icon" id="verdictIcon">✅</div>
+                <div class="verdict-content">
+                    <div class="verdict-badge" id="verdictBadge">CORRECT!</div>
+                    <div class="verdict-explanation" id="verdictExplanation">
+                        Splendid work!
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Victory Modal (Game Finished) -->
+    <div class="modal-overlay hidden" id="victoryModal">
+        <div class="modal-card victory-card">
+            <div class="trophy-bounce">🏆🧊👑</div>
+            <h2 class="modal-title">THE IMPOSSIBLE IS MASTERED!</h2>
+            <p class="modal-subtitle">
+                You saved Pip the Ice Cube from evaporating into thin air through all 10 mind-bending challenges!
+            </p>
+            <div class="final-stats-grid">
+                <div class="final-stat-card">
+                    <span class="fstat-label">Final Score</span>
+                    <span class="fstat-val" id="finalScoreVal">1000</span>
+                </div>
+                <div class="final-stat-card">
+                    <span class="fstat-label">Creative Answers</span>
+                    <span class="fstat-val" id="creativeCountVal">3</span>
+                </div>
+                <div class="final-stat-card">
+                    <span class="fstat-label">Total Time</span>
+                    <span class="fstat-val" id="totalTimeVal">128s</span>
+                </div>
+            </div>
+            <div class="victory-quote">
+                "Cold as liquid nitrogen, sharp as an icicle!"
+            </div>
+            <button class="btn-primary btn-replay" id="playAgainBtn">
+                🔄 Play Again & Beat Record
+            </button>
+        </div>
+    </div>
+
+    <!-- Time Out / Melted Modal -->
+    <div class="modal-overlay hidden" id="timeoutModal">
+        <div class="modal-card melted-card">
+            <div class="trophy-bounce">💧🫠</div>
+            <h2 class="modal-title">PIP MELTED INTO A PUDDLE!</h2>
+            <p class="modal-subtitle" id="timeoutMsg">
+                The clock ran out and the temperature got too hot!
+            </p>
+            <div class="buttons-row centered">
+                <button class="btn-secondary" id="retryLevelBtn">
+                    🔁 Retry This Level
+                </button>
+                <button class="btn-primary" id="restartGameBtn">
+                    🧊 Restart from Level 1
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
